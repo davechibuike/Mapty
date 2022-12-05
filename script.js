@@ -31,7 +31,7 @@ if (navigator.geolocation)
       }).addTo(map);
 
       map.on("click", function (mapEvent) {
-        console.log(mapEvent);
+        // console.log(mapEvent);
 
         const { lat, lng } = mapEvent.latlng;
 
