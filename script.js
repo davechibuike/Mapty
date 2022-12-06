@@ -13,36 +13,43 @@ const inputElevation = document.querySelector(".form__input--elevation");
 
 let map, mapEvent;
 
-//*First arg is success , Second is fail
-if (navigator.geolocation)
-  navigator.geolocation.getCurrentPosition(
-    function (position) {
-      const { latitude, longitude } = position.coords;
+class App {
+  constructor() {}
 
-      console.log(latitude, longitude);
-      console.log(`https://www.google.com/maps/@${latitude},${longitude},13z`);
+  _getPosition() {
+    if (navigator.geolocation)
+      navigator.geolocation.getCurrentPosition(this._loadMap, () =>
+        alert("Could not get your position")
+      );
+  }
 
-      const coords = [latitude, longitude];
+  _loadMap(position) {
+    const { latitude, longitude } = position.coords;
 
-      map = L.map("map").setView(coords, 15);
-      //   console.log(map);
+    console.log(`https://www.google.com/maps/@${latitude},${longitude},13z`);
 
-      L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(map);
+    const coords = [latitude, longitude];
+    map = L.map("map").setView(coords, 15);
 
-      // Handling clicks on map
-      map.on("click", function (mapE) {
-        mapEvent = mapE;
-        form.classList.remove("hidden");
-        inputDistance.focus();
-      });
-    },
-    function () {
-      alert("Could not get your position");
-    }
-  );
+    L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
+
+    // Handling clicks on map
+    map.on("click", function (mapE) {
+      mapEvent = mapE;
+      form.classList.remove("hidden");
+      inputDistance.focus();
+    });
+  }
+
+  _showForm() {}
+
+  _toggleElevationField() {}
+
+  _newWorkout() {}
+}
 
 form.addEventListener("submit", function (e) {
   e.preventDefault();
