@@ -104,12 +104,21 @@ class App {
   _newWorkout(e) {
     e.preventDefault();
 
+    // Get data from form
+    // Check if data is valid
+    // If activity is running, Create running object
+    // If activity is cycling, Create cyclying object
+    // Add the new object to the workout array
+    // Render workout on map as marker
+    // Render Workout on list
+
     inputCadence.value =
       inputDuration.value =
       inputDistance.value =
       inputElevation.value =
         "";
 
+    //* Display Marker
     const { lat, lng } = this.#mapEvent.latlng;
     L.marker([lat, lng])
       .addTo(this.#map)
