@@ -3,14 +3,6 @@
 // prettier-ignore
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-const form = document.querySelector(".form");
-const containerWorkouts = document.querySelector(".workouts");
-const inputType = document.querySelector(".form__input--type");
-const inputDistance = document.querySelector(".form__input--distance");
-const inputDuration = document.querySelector(".form__input--duration");
-const inputCadence = document.querySelector(".form__input--cadence");
-const inputElevation = document.querySelector(".form__input--elevation");
-
 class Workout {
   date = new Date();
   id = (Date.now() + "").slice(-10);
@@ -54,6 +46,14 @@ class Cycling extends Workout {
 
 /////////////////////////////////
 // Application Architecture
+
+const form = document.querySelector(".form");
+const containerWorkouts = document.querySelector(".workouts");
+const inputType = document.querySelector(".form__input--type");
+const inputDistance = document.querySelector(".form__input--distance");
+const inputDuration = document.querySelector(".form__input--duration");
+const inputCadence = document.querySelector(".form__input--cadence");
+const inputElevation = document.querySelector(".form__input--elevation");
 class App {
   #map;
   #mapEvent;
@@ -105,13 +105,28 @@ class App {
     e.preventDefault();
 
     // Get data from form
-    // Check if data is valid
+    const type = inputType.value;
+    const distance = +inputDistance.value;
+    const duration = +inputDuration.value;
+
     // If activity is running, Create running object
+    if (type === "running") {
+      // Check if data is valid
+      const candence = +inputCadence.value;
+    }
+
     // If activity is cycling, Create cyclying object
+    if (type === "cycling") {
+      const elevation = +inputElevation.value;
+      // Check if data is valid
+      if (!Number.isFinite(distance))
+        return alert("Inputs have to be positive numbers");
+    }
     // Add the new object to the workout array
     // Render workout on map as marker
     // Render Workout on list
 
+    // Clear input fields
     inputCadence.value =
       inputDuration.value =
       inputDistance.value =
