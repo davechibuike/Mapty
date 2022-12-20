@@ -54,9 +54,12 @@ const inputDistance = document.querySelector(".form__input--distance");
 const inputDuration = document.querySelector(".form__input--duration");
 const inputCadence = document.querySelector(".form__input--cadence");
 const inputElevation = document.querySelector(".form__input--elevation");
+
+//////////////////////////////////////
 class App {
   #map;
   #mapEvent;
+  #workouts = [];
 
   constructor() {
     this._getPosition();
@@ -102,26 +105,49 @@ class App {
   }
 
   _newWorkout(e) {
+    // validation func
+    const validInputs = (...inputs) =>
+      inputs.every((inp) => Number.isFinite(inp));
+
+    // Validation for all Positive numbers
+    const allPositive = (...inputs) => inputs.every((inp) => inp > 0);
+
     e.preventDefault();
 
     // Get data from form
     const type = inputType.value;
     const distance = +inputDistance.value;
     const duration = +inputDuration.value;
+    const { lat, lng } = this.#mapEvent.latlng;
 
     // If activity is running, Create running object
     if (type === "running") {
       // Check if data is valid
       const candence = +inputCadence.value;
+
+      // Check if data is vaild
+      if (
+        !validInputs(distance, duration, candence) ||
+        !allPositive(distance, duration, candence)
+      )
+        return alert("Inputs have to be positive numbers");
+
+      const workout = new Running([lat, lng], duration, distance, candence);
+      this.#workouts.push(workout);
     }
 
     // If activity is cycling, Create cyclying object
     if (type === "cycling") {
       const elevation = +inputElevation.value;
+
       // Check if data is valid
-      if (!Number.isFinite(distance))
+      if (
+        !validInputs(distance, elevation, duration) ||
+        !allPositive(distance, duration)
+      )
         return alert("Inputs have to be positive numbers");
     }
+
     // Add the new object to the workout array
     // Render workout on map as marker
     // Render Workout on list
@@ -134,7 +160,7 @@ class App {
         "";
 
     //* Display Marker
-    const { lat, lng } = this.#mapEvent.latlng;
+
     L.marker([lat, lng])
       .addTo(this.#map)
       .bindPopup(
