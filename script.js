@@ -102,8 +102,6 @@ class App {
   _loadMap(position) {
     const { latitude, longitude } = position.coords;
 
-    console.log(`https://www.google.com/maps/@${latitude},${longitude},13z`);
-
     const coords = [latitude, longitude];
     this.#map = L.map("map").setView(coords, this.#mapZoomLevel);
 
@@ -276,14 +274,12 @@ class App {
 
   _moveToPopUp(e) {
     const workoutEl = e.target.closest(".workout");
-    console.log(workoutEl);
+
     if (!workoutEl) return;
 
     const workout = this.#workouts.find(
       (work) => work.id === workoutEl.dataset.id
     );
-
-    console.log(workout);
 
     this.#map.setView(workout.coords, this.#mapZoomLevel, {
       animate: true,
@@ -302,7 +298,6 @@ class App {
 
   _getLocalStorage() {
     const data = JSON.parse(localStorage.getItem("workouts"));
-    console.log(data);
 
     if (!data) return;
 
