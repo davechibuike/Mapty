@@ -3,6 +3,7 @@
 class Workout {
   date = new Date();
   id = (Date.now() + "").slice(-10);
+  clicks = 0;
 
   constructor(coords, duration, distance) {
     this.coords = coords; // [lat, lng]
@@ -17,6 +18,10 @@ class Workout {
     this.description = `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${
       months[this.date.getMonth()]
     } ${this.date.getDate()}`;
+  }
+
+  click() {
+    this.clicks++;
   }
 }
 
@@ -71,6 +76,7 @@ const inputElevation = document.querySelector(".form__input--elevation");
 class App {
   #map;
   #mapEvent;
+  #mapZoomLevel = 13;
   #workouts = [];
 
   constructor() {
@@ -80,7 +86,7 @@ class App {
 
     inputType.addEventListener("change", this._toggleElevationField);
 
-    containerWorkouts.addEventListener("click", this._moveToPopUp);
+    containerWorkouts.addEventListener("click", this._moveToPopUp.bind(this));
   }
 
   _getPosition() {
@@ -96,7 +102,7 @@ class App {
     console.log(`https://www.google.com/maps/@${latitude},${longitude},13z`);
 
     const coords = [latitude, longitude];
-    this.#map = L.map("map").setView(coords, 15);
+    this.#map = L.map("map").setView(coords, this.#mapZoomLevel);
 
     L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
       attribution:
@@ -123,7 +129,7 @@ class App {
 
     form.style.display = "none";
     form.classList.add("hidden");
-    setTimeout(() => (form.getElementsByClassName.display = "grid"), 1000);
+    setTimeout(() => (form.style.display = "grid"), 1000);
   }
 
   _toggleElevationField() {
@@ -264,6 +270,23 @@ class App {
   _moveToPopUp(e) {
     const workoutEl = e.target.closest(".workout");
     console.log(workoutEl);
+    if (!workoutEl) return;
+
+    const workout = this.#workouts.find(
+      (work) => work.id === workoutEl.dataset.id
+    );
+
+    console.log(workout);
+
+    this.#map.setView(workout.coords, this.#mapZoomLevel, {
+      animate: true,
+      pan: {
+        duration: 1,
+      },
+    });
+
+    // using the public interface
+    workout.click();
   }
 }
 
