@@ -15,6 +15,8 @@ class Workout {
 }
 
 class Running extends Workout {
+  type = "running";
+
   constructor(coords, duration, distance, candence) {
     super(coords, duration, distance);
     this.candence = candence;
@@ -30,6 +32,8 @@ class Running extends Workout {
 }
 
 class Cycling extends Workout {
+  type = "cycling";
+
   constructor(coords, duration, distance, elevationGain) {
     super(coords, duration, distance);
     this.elevationGain = elevationGain;
@@ -119,6 +123,7 @@ class App {
     const distance = +inputDistance.value;
     const duration = +inputDuration.value;
     const { lat, lng } = this.#mapEvent.latlng;
+    let workout;
 
     // If activity is running, Create running object
     if (type === "running") {
@@ -132,8 +137,7 @@ class App {
       )
         return alert("Inputs have to be positive numbers");
 
-      const workout = new Running([lat, lng], duration, distance, candence);
-      this.#workouts.push(workout);
+      workout = new Running([lat, lng], duration, distance, candence);
     }
 
     // If activity is cycling, Create cyclying object
@@ -146,10 +150,16 @@ class App {
         !allPositive(distance, duration)
       )
         return alert("Inputs have to be positive numbers");
+
+      workout = new Cycling([lat, lng], duration, distance, elevation);
     }
 
     // Add the new object to the workout array
+    this.#workouts.push(workout);
+    console.log(workout);
+
     // Render workout on map as marker
+    this.renderWorkoutMarker(workout);
     // Render Workout on list
 
     // Clear input fields
@@ -160,8 +170,10 @@ class App {
         "";
 
     //* Display Marker
+  }
 
-    L.marker([lat, lng])
+  renderWorkoutMarker(workout) {
+    L.marker(workout.coords)
       .addTo(this.#map)
       .bindPopup(
         L.popup({
@@ -169,10 +181,10 @@ class App {
           minWidth: 100,
           autoClose: false,
           closeOnClick: false,
-          className: "running-popup",
+          className: `${type}-popup`,
         })
       )
-      .setPopupContent("Workout")
+      .setPopupContent(workout.distance)
       .openPopup();
   }
 }
