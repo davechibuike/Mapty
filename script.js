@@ -24,7 +24,7 @@ class Running extends Workout {
   type = "running";
 
   constructor(coords, duration, distance, candence) {
-    super(coords, duration, distance);
+    super(coords, distance, duration);
     this.candence = candence;
 
     this.calcPace();
@@ -41,8 +41,8 @@ class Running extends Workout {
 class Cycling extends Workout {
   type = "cycling";
 
-  constructor(coords, duration, distance, elevationGain) {
-    super(coords, duration, distance);
+  constructor(coords, distance, duration, elevationGain) {
+    super(coords, distance, duration);
     this.elevationGain = elevationGain;
 
     this.calcSpeed();
@@ -51,7 +51,7 @@ class Cycling extends Workout {
 
   calcSpeed() {
     // Km/h
-    this.speed = this.distance / this.duration;
+    this.speed = this.distance / (this.duration / 60);
     return this.speed;
   }
 }
@@ -79,6 +79,8 @@ class App {
     form.addEventListener("submit", this._newWorkout.bind(this));
 
     inputType.addEventListener("change", this._toggleElevationField);
+
+    containerWorkouts.addEventListener("click", this._moveToPopUp);
   }
 
   _getPosition() {
@@ -158,7 +160,7 @@ class App {
       )
         return alert("Inputs have to be positive numbers");
 
-      workout = new Running([lat, lng], duration, distance, candence);
+      workout = new Running([lat, lng], distance, duration, candence);
     }
 
     // If activity is cycling, Create cyclying object
@@ -172,12 +174,11 @@ class App {
       )
         return alert("Inputs have to be positive numbers");
 
-      workout = new Cycling([lat, lng], duration, distance, elevation);
+      workout = new Cycling([lat, lng], distance, duration, elevation);
     }
 
     // Add the new object to the workout array
     this.#workouts.push(workout);
-    console.log(workout);
 
     // Render workout on map as marker
     this._renderWorkoutMarker(workout);
@@ -258,6 +259,11 @@ class App {
     }
 
     form.insertAdjacentHTML("afterend", html);
+  }
+
+  _moveToPopUp(e) {
+    const workoutEl = e.target.closest(".workout");
+    console.log(workoutEl);
   }
 }
 
